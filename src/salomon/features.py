@@ -1,16 +1,16 @@
 """
-Code to create visualizations
+Code to create features for modeling
 """
 
 from pathlib import Path
 
-from src.config import PROCESSED_DATA_DIR, FIGURES_DIR
+from salomon.config import PROCESSED_DATA_DIR
 
 
 def main(
     # ---- REPLACE DEFAULT PATHS AS APPROPRIATE ----
     input_path: Path = PROCESSED_DATA_DIR / "dataset.csv",
-    output_path: Path = FIGURES_DIR / "plot.png",
+    output_path: Path = PROCESSED_DATA_DIR / "features.csv",
     # -----------------------------------------
 ):
 
