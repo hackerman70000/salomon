@@ -4,7 +4,7 @@ Code to train models
 
 from pathlib import Path
 
-from src.config import MODELS_DIR, PROCESSED_DATA_DIR
+from src.salomon.config import MODELS_DIR, PROCESSED_DATA_DIR
 
 
 def main(

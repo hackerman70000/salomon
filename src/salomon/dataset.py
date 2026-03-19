@@ -4,7 +4,7 @@ Code to download or generate data
 
 from pathlib import Path
 
-from src.config import PROCESSED_DATA_DIR, RAW_DATA_DIR
+from salomon.config import PROCESSED_DATA_DIR, RAW_DATA_DIR
 
 
 def main(

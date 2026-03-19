@@ -1,0 +1,38 @@
+[project]
+name = "salomon"
+version = "0.1.0"
+description = "salomon project"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "matplotlib",
+    "numpy",
+    "pandas",
+    "python-dotenv",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[tool.pytest.ini_options]
+addopts = "--maxfail=1 --disable-warnings -q"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
