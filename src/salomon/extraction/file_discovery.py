@@ -3,7 +3,14 @@ from pathlib import Path
 from salomon.extraction.models import LanguageName, SourceFile
 
 
-CPP_EXTENSIONS = {".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp"}
+LANGUAGE_EXTENSIONS: dict[LanguageName, set[str]] = {
+    "c" : {".c"},
+    "cpp": {".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp"},
+    "python": {".py"}
+}
+
+SUPPORTED_EXTENSIONS: set[str] = {item for ext in LANGUAGE_EXTENSIONS.values() for item in ext}
+
 
 IGNORED_DIR_NAMES = {
     ".git",
@@ -25,12 +32,16 @@ def should_skip_dir(dir_name: str) -> bool:
 
 
 def detect_language(path: Path) -> LanguageName:
-    if path.suffix.lower() == ".c":
-        return "c"
-    return "cpp"
+    suffix = path.suffix.lower()
+
+    for lang, extensions in LANGUAGE_EXTENSIONS.items():
+        if suffix in extensions:
+            return lang
+
+    raise ValueError(f"Unsupported file type: {suffix}")
 
 
-def find_c_cpp_files(repo_dir: Path) -> list[SourceFile]:
+def find_files(repo_dir: Path) -> list[SourceFile]:
     files: list[SourceFile] = []
 
     for path in repo_dir.rglob("*"):
@@ -40,7 +51,7 @@ def find_c_cpp_files(repo_dir: Path) -> list[SourceFile]:
         if any(should_skip_dir(part) for part in path.parts):
             continue
 
-        if path.suffix.lower() not in CPP_EXTENSIONS:
+        if path.suffix.lower() not in SUPPORTED_EXTENSIONS:
             continue
 
         files.append(

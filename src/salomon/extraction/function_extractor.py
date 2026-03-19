@@ -7,7 +7,7 @@ from typing import Iterator
 from tree_sitter import Parser
 from tree_sitter_language_pack import get_language
 
-from salomon.extraction.file_discovery import detect_language, find_c_cpp_files
+from salomon.extraction.file_discovery import detect_language, find_files
 from salomon.extraction.git_tools import clone_repo
 from salomon.extraction.models import FunctionInfo, LanguageName
 
@@ -72,7 +72,7 @@ class FunctionExtractor:
         with tempfile.TemporaryDirectory() as tmp_dir:
             tmp_path = Path(tmp_dir)
             repo_path = clone_repo(repo_url, tmp_path)
-            source_files = find_c_cpp_files(repo_path)
+            source_files = find_files(repo_path)
 
             for source_file in source_files:
                 absolute_path = repo_path / source_file.path
@@ -139,9 +139,3 @@ class FunctionExtractor:
         ).strip()
 
 
-if __name__ == "__main__":
-    extractor = FunctionExtractor()
-    functions = extractor.from_repo("https://github.com/hackerman700000/salomon")
-    for func in functions:
-        print(func)
-        print()
