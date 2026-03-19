@@ -8,7 +8,10 @@ dependencies = [
     "matplotlib",
     "numpy",
     "pandas",
+    "pydantic>=2.12.5",
     "python-dotenv",
+    "tree-sitter>=0.25.2",
+    "tree-sitter-language-pack>=0.13.0",
 ]
 
 [dependency-groups]
