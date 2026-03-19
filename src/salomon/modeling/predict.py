@@ -4,7 +4,7 @@ Code to run model inference with trained models
 
 from pathlib import Path
 
-from src.salomon.config import MODELS_DIR, PROCESSED_DATA_DIR
+from salomon.config import MODELS_DIR, PROCESSED_DATA_DIR
 
 
 def main(
