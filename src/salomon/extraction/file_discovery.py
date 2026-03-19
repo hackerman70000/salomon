@@ -2,7 +2,6 @@ from pathlib import Path
 
 from salomon.extraction.models import LanguageName, SourceFile
 
-
 LANGUAGE_EXTENSIONS: dict[LanguageName, set[str]] = {
     "c" : {".c"},
     "cpp": {".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp"},
