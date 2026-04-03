@@ -2,43 +2,35 @@ import os
 import subprocess
 from pathlib import Path
 
-from dotenv import load_dotenv
 
-load_dotenv()
-
-
-def _inject_token(repo_url: str) -> str:
-    token = os.getenv("GIT_TOKEN")
-
-    if not token:
-        return repo_url
-
-    if repo_url.startswith("https://"):
-        return repo_url.replace(
-            "https://",
-            f"https://{token}@",
-        )
-
-    return repo_url
-
-
-def clone_repo(repo_url: str, target_dir: Path) -> Path:
+def clone_repo(repo_url: str, target_dir: Path, branch: str = "main") -> Path:
     repo_name = repo_url.rstrip("/").split("/")[-1]
     if repo_name.endswith(".git"):
         repo_name = repo_name[:-4]
 
     repo_path = target_dir / repo_name
 
-    auth_url = _inject_token(repo_url)
+    token = os.getenv("GIT_TOKEN")
 
-    result = subprocess.run(
-        ["git", "clone", "--depth", "1", auth_url, str(repo_path)],
-        capture_output=True,
-        text=True,
-        check=False,
+    result = repo_url.replace(
+        "https://",
+        f"https://x-access-token:{token}@",
+        1,
     )
 
+    cmd = [
+        "git",
+        "clone",
+        "--depth", "1",
+        "--branch", branch,
+        "--single-branch",
+        result,
+        str(repo_path),
+    ]
+
+    result = subprocess.run(cmd, capture_output=True, text=True)
+
     if result.returncode != 0:
-        raise RuntimeError(f"Git clone failed:\n{result.stderr.strip()}")
+        raise RuntimeError(result.stderr)
 
     return repo_path

@@ -5,7 +5,8 @@ from salomon.extraction.models import LanguageName, SourceFile
 LANGUAGE_EXTENSIONS: dict[LanguageName, set[str]] = {
     "c" : {".c"},
     "cpp": {".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp"},
-    "python": {".py"}
+    "python": {".py"},
+    "java": {".java"}
 }
 
 SUPPORTED_EXTENSIONS: set[str] = {item for ext in LANGUAGE_EXTENSIONS.values() for item in ext}
