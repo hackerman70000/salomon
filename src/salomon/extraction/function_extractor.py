@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import tempfile
 from pathlib import Path
-from typing import Iterator
+from typing import Iterator, get_args
 
 from tree_sitter import Parser
 from tree_sitter_language_pack import get_language
@@ -14,11 +14,10 @@ from salomon.extraction.models import FunctionInfo, LanguageName
 
 class FunctionExtractor:
     def __init__(self) -> None:
-        self._parsers: dict[LanguageName, Parser] = {
-            "c": self._make_parser("c"),
-            "cpp": self._make_parser("cpp"),
-            "python": self._make_parser("python"),
-        }
+        self._parsers: dict[LanguageName, Parser] = {}
+
+        for lang in get_args(LanguageName):
+            self._parsers[lang] = self._make_parser(lang)
 
     def from_code(
             self,
@@ -34,12 +33,16 @@ class FunctionExtractor:
         results: list[FunctionInfo] = []
 
         for node in self._walk(tree.root_node):
-            if node.type != "function_definition":
+            if language == "java":
+                is_function = node.type in {"method_declaration", "constructor_declaration"}
+            else:
+                is_function = node.type == "function_definition"
+
+            if not is_function:
                 continue
 
-            name = self._extract_function_name(source, node)
-            if not name:
-                name = "<unparsed>"
+            name = self._extract_function_name(source, node, language)
+            name = name if name else "<unparsed>"
 
             results.append(
                 FunctionInfo(
@@ -66,12 +69,12 @@ class FunctionExtractor:
             file_path=str(path),
         )
 
-    def from_repo(self, repo_url: str) -> list[FunctionInfo]:
+    def from_repo(self, repo_url: str, branch: str = "main") -> list[FunctionInfo]:
         all_functions: list[FunctionInfo] = []
 
         with tempfile.TemporaryDirectory() as tmp_dir:
             tmp_path = Path(tmp_dir)
-            repo_path = clone_repo(repo_url, tmp_path)
+            repo_path = clone_repo(repo_url, tmp_path, branch)
             source_files = find_files(repo_path)
 
             for source_file in source_files:
@@ -110,7 +113,13 @@ class FunctionExtractor:
         for child in node.children:
             yield from self._walk(child)
 
-    def _extract_function_name(self, source: bytes, node) -> str | None:
+    def _extract_function_name(self, source: bytes, node, language: LanguageName) -> str | None:
+        if language in {"python", "java"}:
+            name_node = node.child_by_field_name("name")
+            if name_node is not None:
+                return self._node_text(source, name_node)
+            return None
+
         declarator = node.child_by_field_name("declarator")
         if declarator is None:
             return None

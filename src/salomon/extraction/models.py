@@ -2,7 +2,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-LanguageName = Literal["c", "cpp", "python"]
+LanguageName = Literal["c", "cpp", "python", "java"]
 
 
 class SourceFile(BaseModel):
