@@ -3,8 +3,9 @@ name = "salomon"
 version = "0.1.0"
 description = "salomon project"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 dependencies = [
+    "forge @ git+https://github.com/hackerman70000/forge",
     "matplotlib",
     "numpy",
     "pandas",
